@@ -18,12 +18,54 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/applicationContext.xml")
 public class LetterServiceTest {
-
   @Autowired
   private LetterService letterService;
 
   @Test
-  public void insert() throws Exception {
+  public void updateStatusByRecipientAndSendTime() throws Exception {
+    Letter myLetter = new Letter();
+    long createTime = System.currentTimeMillis();
+    long sendTime = System.currentTimeMillis();
+    String recipient = "test@futureme.xin";
+    int status = 0;
+
+    myLetter.setCreateTime(createTime);
+    myLetter.setSendTime(sendTime);
+    myLetter.setRecipient(recipient);
+    myLetter.setStatus(status);
+
+    int result = letterService.insert(myLetter);
+    assertEquals(result, 1);
+
+    myLetter = letterService.getLetterByRecipientAndSendTime(recipient, sendTime);
+    assertNotNull(myLetter);
+    assertEquals(recipient, myLetter.getRecipient());
+    assertEquals(sendTime, myLetter.getSendTime());
+    assertEquals(status, myLetter.getStatus());
+
+    status = 1;
+    result = letterService.updateStatusByRecipientAndSendTime(recipient, sendTime, status);
+    assertEquals(result, 1);
+
+    myLetter = letterService.getLetterByRecipientAndSendTime(recipient, sendTime);
+    assertNotNull(myLetter);
+    assertEquals(recipient, myLetter.getRecipient());
+    assertEquals(sendTime, myLetter.getSendTime());
+    assertEquals(status, myLetter.getStatus());
+    assertNotEquals(0, myLetter.getUpdateTime());
+
+    result = letterService.deleteByPrimaryKey(myLetter.getId());
+    assertEquals(result, 1);
+  }
+
+  @Test
+  public void getLetterByRecipientAndSendTime() throws Exception {
+
+  }
+
+
+  @Test
+  public void insertTestItem() throws Exception {
     Letter myLetter = new Letter();
     long createTime = System.currentTimeMillis();
     long sendTime = System.currentTimeMillis();
@@ -48,20 +90,20 @@ public class LetterServiceTest {
 
   @Test
   public void getLettersByRecipient() throws Exception {
-    String recipient = "guofzhao@163.com";
+    String recipient = "test@futureme.xin";
     List<Letter> letters = letterService.getLettersByRecipient(recipient);
     assertNotNull(letters);
-    assertEquals(recipient, letters.get(0).getRecipient());
+    // assertEquals(recipient, letters.get(0).getRecipient());
   }
 
   @Test
   public void deleteByPrimaryKey() throws Exception {
-    LetterExample example = new LetterExample();
-    List<Letter> letters = letterService.getLettersByExample(example);
-//    assertNotNull(letters);
-//    for (Letter letter : letters) {
-//      letterService.deleteByPrimaryKey(letter.getId());
-//    }
+    String recipient = "test@futureme.xin";
+    List<Letter> letters = letterService.getLettersByRecipient(recipient);
+    assertNotNull(letters);
+    for (Letter letter : letters) {
+      letterService.deleteByPrimaryKey(letter.getId());
+    }
   }
 
 }

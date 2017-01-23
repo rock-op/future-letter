@@ -49,14 +49,22 @@ public class LetterServiceImpl implements LetterService{
     return letters;
   }
 
-  // TODO: complete it
   @Override
-  public List<Letter> getLettersByExample(LetterExample letterExample) {
-    return null;
+  public Letter getLetterByRecipientAndSendTime(String recipient, long sendTime) {
+    Letter letter = letterMapper.getLetterByRecipientAndSendTime(recipient, sendTime);
+    if (null == letter) {
+      letter = new Letter();
+    }
+    return letter;
   }
 
   @Override
   public int deleteByPrimaryKey(int id) {
     return letterMapper.deleteByPrimaryKey(id);
+  }
+
+  @Override
+  public int updateStatusByRecipientAndSendTime(String recipient, long sendTime, int status) {
+    return letterMapper.updateStatusByRecipientAndSendTime(recipient, sendTime, status);
   }
 }

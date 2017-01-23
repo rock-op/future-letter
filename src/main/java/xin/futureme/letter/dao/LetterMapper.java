@@ -13,8 +13,14 @@ import java.util.List;
 @Repository
 public interface LetterMapper {
   int insert(Letter letter);
+
   Letter getLetterByPrimaryKey(@Param("id") int id);
+
   List<Letter> getLettersByRecipient(@Param("recipient") String recipient);
+
   int deleteByPrimaryKey(@Param("id") int id);
-  List<Letter> getLettersByExample(LetterExample example);
+
+  Letter getLetterByRecipientAndSendTime(@Param("recipient") String recipient, @Param("sendTime") long sendTime);
+
+  int updateStatusByRecipientAndSendTime(@Param("recipient") String recipient, @Param("sendTime") long sendTime, @Param("status") int status);
 }

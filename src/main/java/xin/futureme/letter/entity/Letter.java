@@ -17,6 +17,8 @@ public class Letter implements Serializable {
   private int privacyType = 0;
   private int status = 0;
 
+  private long updateTime = 0;
+
   public Letter() {
   }
 
@@ -29,6 +31,7 @@ public class Letter implements Serializable {
     this.sendTime = sendTime;
     this.privacyType = privacyType;
     this.status = status;
+    this.updateTime = 0;
   }
 
   public Letter(int id, String recipient, String subject, String body, long createTime, long sendTime, int privacyType, int status) {
@@ -40,6 +43,7 @@ public class Letter implements Serializable {
     this.sendTime = sendTime;
     this.privacyType = privacyType;
     this.status = status;
+    this.updateTime = 0;
   }
 
   public int getId() {
@@ -106,6 +110,14 @@ public class Letter implements Serializable {
     return status;
   }
 
+  public long getUpdateTime() {
+    return updateTime;
+  }
+
+  public void setUpdateTime(long updateTime) {
+    this.updateTime = updateTime;
+  }
+
   @Override
   public String toString() {
     return "Letter{" +
@@ -117,6 +129,7 @@ public class Letter implements Serializable {
         ", sendTime=" + sendTime +
         ", privacyType=" + privacyType +
         ", status=" + status +
+        ", updateTime=" + updateTime +
         '}';
   }
 }

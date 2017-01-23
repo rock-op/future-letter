@@ -7,6 +7,8 @@ CREATE TABLE `letter` (
   `send_time` bigint(20) NOT NULL,
   `privacy_type` tinyint(4) NOT NULL DEFAULT '0',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态, 0:未付费, 未发送; 1:已付费, 未发送; 2:已付费, 未发送; 3:已付费, 已发送',
+  `update_time` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `idx_letter_info` (`recipient`,`send_time`,`status`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `uni_recipient_send_time` (`recipient`,`send_time`) USING BTREE,
+  KEY `uni_letter_info` (`recipient`,`send_time`,`status`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;

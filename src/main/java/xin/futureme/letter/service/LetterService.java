@@ -11,9 +11,14 @@ import java.util.List;
 public interface LetterService {
 
   int insert(Letter letter);
+
   int deleteByPrimaryKey(int id);
-  // int updateStatus();
+
+  int updateStatusByRecipientAndSendTime(String recipient, long sendTime, int status);
+
   Letter getLetterByPrimaryKey(int id);
+
   List<Letter> getLettersByRecipient(String recipient);
-  List<Letter> getLettersByExample(LetterExample letterExample);
+
+  Letter getLetterByRecipientAndSendTime(String recipient, long sendTime);
 }
