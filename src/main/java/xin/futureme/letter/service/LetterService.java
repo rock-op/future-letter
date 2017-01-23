@@ -1,7 +1,6 @@
 package xin.futureme.letter.service;
 
 import xin.futureme.letter.entity.Letter;
-import xin.futureme.letter.entity.LetterExample;
 
 import java.util.List;
 

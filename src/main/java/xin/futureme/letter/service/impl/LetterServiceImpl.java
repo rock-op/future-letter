@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import xin.futureme.letter.dao.LetterMapper;
 import xin.futureme.letter.entity.Letter;
-import xin.futureme.letter.entity.LetterExample;
 import xin.futureme.letter.service.LetterService;
 
 import java.util.ArrayList;

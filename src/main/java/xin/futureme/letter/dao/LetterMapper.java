@@ -3,7 +3,6 @@ package xin.futureme.letter.dao;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import xin.futureme.letter.entity.Letter;
-import xin.futureme.letter.entity.LetterExample;
 
 import java.util.List;
 
