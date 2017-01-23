@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xin.futureme.letter.dao.LetterMapper">
+    <resultMap id="BaseResultMap" type="xin.futureme.letter.entity.Letter">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="recipient" jdbcType="VARCHAR" property="recipient"/>
+        <result column="subject" jdbcType="VARCHAR" property="subject"/>
+        <result column="body" jdbcType="VARCHAR" property="body"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="send_time" jdbcType="BIGINT" property="sendTime" />
+        <result column="privacy_type" jdbcType="VARCHAR" property="privacyType"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, recipient, subject, body, create_time, send_time, privacy_type, status
+    </sql>
+
+    <select id="getLetterByPrimaryKey" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        id, recipient, subject, body, create_time, send_time, privacy_type, status
+        FROM letter
+        WHERE id = #{id}
+    </select>
+
+    <select id="getLettersByRecipient" resultMap="BaseResultMap">
+        SELECT
+        id, recipient, subject, body, create_time, send_time, privacy_type, status
+        FROM letter
+        WHERE recipient = #{recipient}
+    </select>
+
+    <select id="getLettersByExample" parameterType="xin.futureme.letter.entity.LetterExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from letter
+        <!-- todo, need to be completed -->
+        <!--<if test="_parameter != null">-->
+            <!--<include refid="Example_Where_Clause" />-->
+        <!--</if>-->
+        <!--<if test="orderByClause != null">-->
+            <!--order by ${orderByClause}-->
+        <!--</if>-->
+    </select>
+
+    <insert id="insert" parameterType="xin.futureme.letter.entity.Letter">
+        INSERT INTO letter (id, recipient, subject,
+          body, create_time, send_time,
+          privacy_type, status
+          )
+        VALUES (#{id}, #{recipient}, #{subject},
+          #{body}, #{createTime}, #{sendTime},
+          #{privacyType}, #{status}
+        )
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="int">
+        DELETE FROM letter
+        WHERE id = #{id}
+    </delete>
+</mapper>
