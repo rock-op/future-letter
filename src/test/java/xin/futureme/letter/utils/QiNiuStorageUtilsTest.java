@@ -17,9 +17,9 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "/applicationContext.xml")
 public class QiNiuStorageUtilsTest {
   @Test
-  public void upload() throws Exception {
+  public void uploadFromFile() throws Exception {
     String fileName = "F:\\test.txt";
-    String body = "hi rock, i'm you";
+    String body = "你好，世界。hello world ";
     FileWriter fileWriter = new FileWriter(fileName);
     fileWriter.write(body);
     fileWriter.close();
@@ -29,13 +29,23 @@ public class QiNiuStorageUtilsTest {
   }
 
   @Test
+  public void uploadFromData() throws Exception {
+    String body = "你好，世界。hello world #@!@$(";
+    String key = "test1.txt";
+    QiNiuStorageUtils.upload(body.getBytes(), key);
+  }
+
+  @Test
   public void uploadFile2InvalidBucket() throws Exception {
 
   }
 
   @Test
-  public void getBucketKey() throws Exception {
-
+  public void getBucketKeyContent() throws Exception {
+    String bucketName = "future-me-letters";
+    String key = "test.txt";
+    String content = QiNiuStorageUtils.getBucketKeyContent(bucketName, key);
+    System.out.println(content);
   }
 
 }

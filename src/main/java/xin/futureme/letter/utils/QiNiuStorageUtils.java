@@ -17,6 +17,9 @@ import java.io.IOException;
 
 /**
  * Created by rockOps on 2017-01-23.
+ * 1. upload: 上传到七牛的bucket中，支持指定文件名上传文件名，支持直接写字节流
+ * 2. getBucketKeyContent: 获取七牛中key的内容
+ * 注意: 同一个文件名，不允许被覆盖写入。内容不一样的话，上传多次会报错，抛exception。
  */
 public class QiNiuStorageUtils {
   private final static Logger logger = LoggerFactory.getLogger(QiNiuStorageUtils.class);
@@ -33,31 +36,35 @@ public class QiNiuStorageUtils {
   }
 
   public static void upload(String fileName, String bucketName, String key) throws QiniuException {
-    Zone zone = Zone.autoZone();
-    Configuration c = new Configuration(zone);
-    UploadManager uploadManager = new UploadManager(c);
+    UploadManager uploadManager = getZone1UploadManager();
     String uploadToken = getUploadToken(bucketName, key);
 
     Response response = uploadManager.put(fileName, key, uploadToken);
     logger.info(response.bodyString());
   }
 
-  public static void upload(byte[] data, String key) throws QiniuException {
+  private static UploadManager getZone1UploadManager() {
+    Zone zone = Zone.zone1();
+    Configuration c = new Configuration(zone);
+    return new UploadManager(c);
+  }
+
+  public static void upload(byte[] data, final String key) throws QiniuException {
     upload(data, DEFAULT_BUCKET_NAME, key);
   }
 
-  public static void upload(byte[] data, String bucketName, String key) throws QiniuException {
-    Zone zone = Zone.autoZone();
-    Configuration c = new Configuration(zone);
-    UploadManager uploadManager = new UploadManager(c);
+  public static void upload(byte[] data, String bucketName, final String key) throws QiniuException {
+    StringMap params = new StringMap();
+    UploadManager uploadManager = getZone1UploadManager();
     String uploadToken = getUploadToken(bucketName, key);
 
-    Response response = uploadManager.put(data, key, uploadToken);
+    Response response = uploadManager.put(data, key, uploadToken, params, null, true);
     logger.info(response.bodyString());
   }
 
   private static String getUploadToken(String bucketName, String key) {
     StringMap attributes = new StringMap();
+    // 在这里控制bucket:key的内容是否允许被覆盖
     attributes.put("insertOnly", 1);
     int timeout = DEFAULT_TIMEOUT;
     return getUploadToken(bucketName, key, timeout, attributes);
@@ -68,8 +75,9 @@ public class QiNiuStorageUtils {
     return auth.uploadToken(bucketName, key, timeout, attributes);
   }
 
-  public static byte[] getBucketKey(String bucketName, String key) throws IOException {
-    return DownloadUtils.downloadToByteArray(getDownloadUrl(bucketName, key));
+  public static String getBucketKeyContent(String bucketName, String key) throws IOException {
+    byte[] content = DownloadUtils.downloadToByteArray(getDownloadUrl(bucketName, key));
+    return new String(content);
   }
 
   private static String getDownloadUrl(String bucketName, String key) throws IOException {
