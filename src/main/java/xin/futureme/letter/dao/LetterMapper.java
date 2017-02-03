@@ -22,4 +22,6 @@ public interface LetterMapper {
   Letter getLetterByRecipientAndSendTime(@Param("recipient") String recipient, @Param("sendTime") long sendTime);
 
   int updateStatusByRecipientAndSendTime(@Param("recipient") String recipient, @Param("sendTime") long sendTime, @Param("status") int status);
+
+  int updateStatusByPrimaryKey(@Param("id") int id , @Param("status") int status);
 }

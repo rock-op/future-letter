@@ -21,7 +21,7 @@ public class LetterServiceTest {
   private LetterService letterService;
 
   @Test
-  public void updateStatusByRecipientAndSendTime() throws Exception {
+  public void updateStatusByPrimaryKey() throws Exception {
     Letter myLetter = new Letter();
     long createTime = System.currentTimeMillis();
     long sendTime = System.currentTimeMillis();
@@ -43,7 +43,7 @@ public class LetterServiceTest {
     assertEquals(status, myLetter.getStatus());
 
     status = 1;
-    result = letterService.updateStatusByRecipientAndSendTime(recipient, sendTime, status);
+    result = letterService.updateStatusByPrimaryKey(myLetter.getId(), status);
     assertEquals(result, 1);
 
     myLetter = letterService.getLetterByRecipientAndSendTime(recipient, sendTime);
@@ -64,7 +64,7 @@ public class LetterServiceTest {
 
 
   @Test
-  public void insertTestItem() throws Exception {
+  public void insert() throws Exception {
     Letter myLetter = new Letter();
     long createTime = System.currentTimeMillis();
     long sendTime = System.currentTimeMillis();
@@ -73,6 +73,7 @@ public class LetterServiceTest {
     myLetter.setCreateTime(createTime);
     myLetter.setSendTime(sendTime);
     myLetter.setRecipient(recipient);
+    myLetter.setBody("这是一封测试邮件，please ignore.");
 
     int result = letterService.insert(myLetter);
     assertEquals(result, 1);
@@ -105,4 +106,9 @@ public class LetterServiceTest {
     }
   }
 
+  @Test
+  public void sendMail() throws Exception {
+    Letter letter = letterService.getLetterByPrimaryKey(1);
+    letterService.send(letter);
+  }
 }

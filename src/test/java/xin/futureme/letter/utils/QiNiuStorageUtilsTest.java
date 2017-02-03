@@ -25,14 +25,14 @@ public class QiNiuStorageUtilsTest {
     fileWriter.close();
 
     String key = "test.txt";
-    QiNiuStorageUtils.upload(fileName, key);
+    QiNiuStorageUtils.upload2DefaultBucket(fileName, key);
   }
 
   @Test
   public void uploadFromData() throws Exception {
     String body = "你好，世界。hello world #@!@$(";
     String key = "test1.txt";
-    QiNiuStorageUtils.upload(body.getBytes(), key);
+    QiNiuStorageUtils.upload2DefaultBucket(body.getBytes(), key);
   }
 
   @Test

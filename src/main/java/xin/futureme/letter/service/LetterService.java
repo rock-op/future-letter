@@ -1,7 +1,9 @@
 package xin.futureme.letter.service;
 
+import com.qiniu.common.QiniuException;
 import xin.futureme.letter.entity.Letter;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -9,15 +11,17 @@ import java.util.List;
  */
 public interface LetterService {
 
-  int insert(Letter letter);
+  int insert(Letter letter) throws IOException;
 
   int deleteByPrimaryKey(int id);
 
-  int updateStatusByRecipientAndSendTime(String recipient, long sendTime, int status);
+  int updateStatusByPrimaryKey(int id, int status);
 
   Letter getLetterByPrimaryKey(int id);
 
   List<Letter> getLettersByRecipient(String recipient);
 
   Letter getLetterByRecipientAndSendTime(String recipient, long sendTime);
+
+  void send(Letter letter) throws IOException;
 }

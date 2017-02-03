@@ -9,11 +9,11 @@ public class Letter implements Serializable {
   private static final long serialVersionUID = -7749804721944401370L;
 
   private int id = 0;
-  private String recipient;
+  private String recipient;       // not null
   private String subject = "";
   private String body = "";
-  private long createTime;
-  private long sendTime;
+  private long createTime;        // not null
+  private long sendTime;          // not null
   private int privacyType = 0;
   private int status = 0;
 

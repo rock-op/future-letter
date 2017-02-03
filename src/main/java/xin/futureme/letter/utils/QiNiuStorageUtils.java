@@ -1,6 +1,5 @@
 package xin.futureme.letter.utils;
 
-import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
@@ -9,9 +8,7 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
-import xin.futureme.letter.config.QiNiuConfig;
+import xin.futureme.letter.common.QiNiuConfig;
 
 import java.io.IOException;
 
@@ -20,6 +17,7 @@ import java.io.IOException;
  * 1. upload: 上传到七牛的bucket中，支持指定文件名上传文件名，支持直接写字节流
  * 2. getBucketKeyContent: 获取七牛中key的内容
  * 注意: 同一个文件名，不允许被覆盖写入。内容不一样的话，上传多次会报错，抛exception。
+ * todo, 需要增加在七牛上的加密解密逻辑，对文件内容进行加密
  */
 public class QiNiuStorageUtils {
   private final static Logger logger = LoggerFactory.getLogger(QiNiuStorageUtils.class);
@@ -31,11 +29,11 @@ public class QiNiuStorageUtils {
   private final static int DEFAULT_TIMEOUT = 3600;
 
   // key就是bucket中的文件名
-  public static void upload(String fileName, String key) throws QiniuException {
+  public static void upload2DefaultBucket(String fileName, String key) throws IOException {
     upload(fileName, DEFAULT_BUCKET_NAME, key);
   }
 
-  public static void upload(String fileName, String bucketName, String key) throws QiniuException {
+  public static void upload(String fileName, String bucketName, String key) throws IOException {
     UploadManager uploadManager = getZone1UploadManager();
     String uploadToken = getUploadToken(bucketName, key);
 
@@ -49,11 +47,11 @@ public class QiNiuStorageUtils {
     return new UploadManager(c);
   }
 
-  public static void upload(byte[] data, final String key) throws QiniuException {
+  public static void upload2DefaultBucket(byte[] data, final String key) throws IOException {
     upload(data, DEFAULT_BUCKET_NAME, key);
   }
 
-  public static void upload(byte[] data, String bucketName, final String key) throws QiniuException {
+  public static void upload(byte[] data, String bucketName, final String key) throws IOException {
     StringMap params = new StringMap();
     UploadManager uploadManager = getZone1UploadManager();
     String uploadToken = getUploadToken(bucketName, key);
@@ -75,12 +73,16 @@ public class QiNiuStorageUtils {
     return auth.uploadToken(bucketName, key, timeout, attributes);
   }
 
-  public static String getBucketKeyContent(String bucketName, String key) throws IOException {
+  public static String getDefaultBucketKeyContent(final String key) throws IOException {
+    return getBucketKeyContent(DEFAULT_BUCKET_NAME, key);
+  }
+
+  public static String getBucketKeyContent(String bucketName, final String key) throws IOException {
     byte[] content = DownloadUtils.downloadToByteArray(getDownloadUrl(bucketName, key));
     return new String(content);
   }
 
-  private static String getDownloadUrl(String bucketName, String key) throws IOException {
+  private static String getDownloadUrl(String bucketName, final String key) throws IOException {
     String bucketDomain = getBucketDomainByName(bucketName);
 
     String Url = "http://" + bucketDomain + "/" + key;

@@ -54,9 +54,9 @@
         WHERE id = #{id}
     </delete>
 
-    <update id="updateStatusByRecipientAndSendTime">
+    <update id="updateStatusByPrimaryKey">
         UPDATE letter
         SET status = #{status}, update_time = NOW()
-        WHERE recipient = #{recipient} AND send_time = #{sendTime}
+        WHERE id = #{id}
     </update>
 </mapper>

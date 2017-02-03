@@ -1,4 +1,4 @@
-package xin.futureme.letter.config;
+package xin.futureme.letter.common;
 
 import xin.futureme.letter.utils.Config;
 
