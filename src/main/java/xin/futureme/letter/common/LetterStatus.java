@@ -4,7 +4,8 @@ package xin.futureme.letter.common;
  * Created by rockOps on 2017-02-03.
  */
 public enum LetterStatus {
-  UNPAID(0, "未付款"), UNSENT(1, "未发送"), SENDING(2, "发送中"), SENT_FAILURE(3, "发送失败"), SENT_SUCCESS(4, "发送成功");
+  // 从 未发送 到 待发送，可能会有多种策略，比如是否付费等
+  UNSENT(0, "未发送"), NEED_SENT(1, "待发送"), SENDING(2, "发送中"), SENT_FAILURE(3, "发送失败"), SENT_SUCCESS(4, "发送成功");
 
   public int getCode() {
     return code;
