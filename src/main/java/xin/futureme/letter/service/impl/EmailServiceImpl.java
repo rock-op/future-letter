@@ -26,6 +26,7 @@ public class EmailServiceImpl implements EmailService {
   public void send(String to, String subject, String body) throws MessagingException {
     try {
       MimeMessage mimeMessage = mailSender.createMimeMessage();
+      // 邮件格式编码设定为UTF-8, 防止中文内容乱码
       MimeMessageHelper msgHelper = new MimeMessageHelper(mimeMessage, true, "utf-8");
 
       msgHelper.setFrom(from);
