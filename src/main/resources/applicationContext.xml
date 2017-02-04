@@ -16,6 +16,7 @@
     <context:component-scan base-package="xin.futureme.letter.dao"/>
 
     <import resource="classpath:spring-mybatis.xml"/>
+    <import resource="classpath:email.xml"/>
 
     <bean id="configProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -24,6 +25,7 @@
             <list>
                 <value>classpath*:/qiniu.properties</value>
                 <value>classpath*:/jdbc.properties</value>
+                <value>classpath*:/email.properties</value>
             </list>
         </property>
     </bean>

@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import xin.futureme.letter.entity.Letter;
 
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 

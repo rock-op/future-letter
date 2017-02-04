@@ -3,6 +3,7 @@ package xin.futureme.letter.service;
 import com.qiniu.common.QiniuException;
 import xin.futureme.letter.entity.Letter;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,5 +24,5 @@ public interface LetterService {
 
   Letter getLetterByRecipientAndSendTime(String recipient, long sendTime);
 
-  void send(Letter letter) throws IOException;
+  void send(Letter letter) throws IOException, MessagingException;
 }

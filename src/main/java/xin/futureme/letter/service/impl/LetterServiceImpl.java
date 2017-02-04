@@ -4,17 +4,23 @@ import com.qiniu.common.QiniuException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import xin.futureme.letter.common.LetterStatus;
 import xin.futureme.letter.dao.LetterMapper;
 import xin.futureme.letter.entity.Letter;
+import xin.futureme.letter.service.EmailService;
 import xin.futureme.letter.service.LetterService;
 import xin.futureme.letter.utils.QiNiuStorageUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 /**
  * Created by rockOps on 2017-01-23.
@@ -24,6 +30,9 @@ import java.util.List;
 public class LetterServiceImpl implements LetterService{
 
   private final static Logger logger = LoggerFactory.getLogger(LetterServiceImpl.class);
+
+  @Autowired
+  private EmailService emailService;
 
   @Autowired
   private LetterMapper letterMapper;
@@ -87,31 +96,20 @@ public class LetterServiceImpl implements LetterService{
    */
   @Override
   public void send(Letter letter) throws IOException {
-    logger.info("send letter, letterId: {}, letterRecipient:{}, createTime:{}",
+    logger.info("send letter, letterId: {}, to:{}, createTime:{}",
         letter.getId(), letter.getRecipient(), letter.getCreateTime());
     String body = QiNiuStorageUtils.getDefaultBucketKeyContent(letter.getBody());
-    logger.debug("letterId:{}, letterBody:{}, body:{}",
+    logger.debug("letter, Id:{}, key:{}, body:{}",
         letter.getId(), letter.getBody(), body);
     letter.setBody(body);
 
-    boolean isSendingMailSuccess = false;
-    isSendingMailSuccess = sendMail(letter);
-    if (isSendingMailSuccess) {
+    try {
+      emailService.send(letter.getRecipient(), letter.getSubject(), letter.getBody());
       updateStatusByPrimaryKey(letter.getId(), LetterStatus.SENT_SUCCESS.getCode());
-    } else {
+    } catch (MessagingException e) {
       updateStatusByPrimaryKey(letter.getId(), LetterStatus.SENT_FAILURE.getCode());
+      logger.error("send mail error, id:{}, to:{}, msg:{}", letter.getId(), letter.getRecipient(), e.getMessage());
     }
-  }
-
-  /**
-   * 发送邮件
-   * @param letter
-   * @return
-   */
-  private boolean sendMail(Letter letter) {
-    updateStatusByPrimaryKey(letter.getId(), LetterStatus.SENDING.getCode());
-    logger.info("sending letterId:{} ...", letter.getId());
-    return true;
   }
 
   @Override
