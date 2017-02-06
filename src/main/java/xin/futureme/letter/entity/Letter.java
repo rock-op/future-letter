@@ -10,7 +10,7 @@ public class Letter implements Serializable {
 
   private int id = 0;
   private String recipient;       // not null
-  private String subject = "";
+  private String subject = "无主题";
   private String body = "";
   private long createTime;        // not null
   private long sendTime;          // not null

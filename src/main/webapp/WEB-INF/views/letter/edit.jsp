@@ -19,19 +19,19 @@
 
     <div id="main" class="main">
         <div class="mainLeft">
-            <h2>Write a letter to future me</h2>
+            <h2>写封信给未来的自己</h2>
             <form accept-charset="utf-8" action="/letter/save" class="letterForm" id="new_letter" method="post">
                 <table>
                     <tbody>
                     <tr>
                         <th>邮箱：</th>
-                        <td><input id="recipient" name="recipient" size="45" type="text" value="email address"></td>
+                        <td><input id="recipient" name="recipient" size="45" type="text" value="E-mail地址"></td>
                         <td></td>
                     </tr>
                     <tr>
                         <th>主题：</th>
                         <td>
-                            <input id="subject" type="text" name="subject" value="一封来自于 的信" size="45"/>
+                            <input id="subject" type="text" name="subject" value="致未来的自己" size="45"/>
                         </td>
                         <td></td>
                     </tr>

@@ -1,26 +1,22 @@
 package xin.futureme.letter.service.impl;
 
-import com.qiniu.common.QiniuException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import xin.futureme.letter.common.LetterStatus;
+import xin.futureme.letter.common.StorageConfig;
 import xin.futureme.letter.dao.LetterMapper;
 import xin.futureme.letter.entity.Letter;
 import xin.futureme.letter.service.EmailService;
 import xin.futureme.letter.service.LetterService;
-import xin.futureme.letter.utils.QiNiuStorageUtils;
+import xin.futureme.letter.service.StorageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 /**
  * Created by rockOps on 2017-01-23.
@@ -37,22 +33,25 @@ public class LetterServiceImpl implements LetterService{
   @Autowired
   private LetterMapper letterMapper;
 
+  @Autowired
+  private StorageService storageService;
+
   /**
-   * 将信件内容写入qiniu，并将bucket:key写入数据库
+   * 将信件内容写入storage，并将bucket:key写入数据库
    * @param letter
    * @return
-   * @throws QiniuException
+   * @throws IOException
    */
   @Override
   public int insert(Letter letter) throws IOException {
     String key = generateKey(letter);
-    QiNiuStorageUtils.upload2DefaultBucket(letter.getBody().getBytes(), key);
+    storageService.upload(letter.getBody().getBytes(), StorageConfig.DEFAULT_BUCKET_NAME, key);
     letter.setBody(key);
     return letterMapper.insert(letter);
   }
 
   private String generateKey(Letter letter) {
-    String prefix = "qiniu:";
+    String prefix = "oss:";
     long timestamp = System.currentTimeMillis();
     String username = letter.getRecipient();
 
@@ -98,7 +97,7 @@ public class LetterServiceImpl implements LetterService{
   public void send(Letter letter) throws IOException, MessagingException {
     logger.info("send letter, letterId: {}, to:{}, createTime:{}",
         letter.getId(), letter.getRecipient(), letter.getCreateTime());
-    String body = QiNiuStorageUtils.getDefaultBucketKeyContent(letter.getBody());
+    String body = storageService.getBucketKeyContent(StorageConfig.DEFAULT_BUCKET_NAME, letter.getBody());
     letter.setBody(body);
 
     try {

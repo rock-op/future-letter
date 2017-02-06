@@ -27,6 +27,7 @@
                 <value>classpath*:/qiniu.properties</value>
                 <value>classpath*:/jdbc.properties</value>
                 <value>classpath*:/email.properties</value>
+                <value>classpath*:/oss.properties</value>
             </list>
         </property>
     </bean>
