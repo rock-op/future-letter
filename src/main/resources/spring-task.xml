@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <!--1、 配置文件中添加业务类，该类为调用的工作类 -->
+    <bean id="postman" class="xin.futureme.letter.task.Postman"/>
+
+    <!-- 2、定义任务，在spring文件中配置代理类 ，定义调用对象和调用对象的方法-->
+    <bean id="postmanTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="postman"/>
+        <property name="targetMethod" value="deliver"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+
+    <!-- 3、配置触发器，定义触发时间，可以根据不同的时间对同一个任务定义多个触发器-->
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="postmanTask"/>
+        <property name="cronExpression" value="0 0 * * * ?"/>
+    </bean>
+
+    <!-- 4、配置调度器 ，容器启动就会执行调度程序
+    总管理类，如果lazy-init='false',则容器启动时就会执行调度程序
+    如果lazy-init='true',则需要实例化该bean才能执行调度程序-->
+    <bean id="scheduleFactory" lazy-init="false" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>
