@@ -25,4 +25,6 @@ public interface LetterService {
   Letter getLetterByRecipientAndSendTime(String recipient, long sendTime);
 
   void send(Letter letter) throws IOException, MessagingException;
+
+  List<Letter> getLettersReadyToSend(long sendTime);
 }

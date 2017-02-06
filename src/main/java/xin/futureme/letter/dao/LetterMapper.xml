@@ -38,6 +38,13 @@
         WHERE recipient = #{recipient} AND send_time = #{sendTime}
     </select>
 
+    <select id="getUnsentLetters" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM letter
+        WHERE send_time <![CDATA[<=]]> #{sendTime} AND status != 4
+    </select>
+
     <insert id="insert" parameterType="xin.futureme.letter.entity.Letter">
         INSERT INTO letter (id, recipient, subject,
           body, create_time, send_time,

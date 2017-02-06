@@ -112,4 +112,14 @@ public class LetterServiceTest {
     Letter letter = letterService.getLetterByPrimaryKey(1);
     letterService.send(letter);
   }
+
+  @Test
+  public void getLettersReadyToSend() throws Exception {
+    long sendTime = 1486358605000L;
+
+    List<Letter> letters = letterService.getLettersReadyToSend(sendTime);
+    for (Letter letter : letters) {
+      System.err.println(letter);
+    }
+  }
 }

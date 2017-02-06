@@ -95,12 +95,10 @@ public class LetterServiceImpl implements LetterService{
    * @throws IOException
    */
   @Override
-  public void send(Letter letter) throws IOException {
+  public void send(Letter letter) throws IOException, MessagingException {
     logger.info("send letter, letterId: {}, to:{}, createTime:{}",
         letter.getId(), letter.getRecipient(), letter.getCreateTime());
     String body = QiNiuStorageUtils.getDefaultBucketKeyContent(letter.getBody());
-    logger.debug("letter, Id:{}, key:{}, body:{}",
-        letter.getId(), letter.getBody(), body);
     letter.setBody(body);
 
     try {
@@ -109,7 +107,18 @@ public class LetterServiceImpl implements LetterService{
     } catch (MessagingException e) {
       updateStatusByPrimaryKey(letter.getId(), LetterStatus.SENT_FAILURE.getCode());
       logger.error("send mail error, id:{}, to:{}, msg:{}", letter.getId(), letter.getRecipient(), e.getMessage());
+      throw new MessagingException(e.getMessage());
     }
+  }
+
+  @Override
+  public List<Letter> getLettersReadyToSend(long sendTime) {
+    List<Letter> letters = null;
+    letters = letterMapper.getUnsentLetters(sendTime);
+    if (letters == null) {
+      letters = new ArrayList<>();
+    }
+    return letters;
   }
 
   @Override

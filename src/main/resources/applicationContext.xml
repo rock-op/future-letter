@@ -17,6 +17,7 @@
 
     <import resource="classpath:spring-mybatis.xml"/>
     <import resource="classpath:email.xml"/>
+    <import resource="classpath:spring-task.xml"/>
 
     <bean id="configProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
