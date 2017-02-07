@@ -3,20 +3,10 @@
 <html>
 <head>
     <title>futureMe.xin</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/main.css">
 </head>
 <body>
 <div class="pageContainer">
-    <div class="login" id="login">
-        <div id="logged_out" class="">
-            <a href="/sessions/new" class="ajax_link" rel="nofollow">登录</a>
-            &nbsp; &nbsp;
-            <a href="/users/new" class="ajax_link" rel="nofollow">注册</a>
-        </div>
-        <div id="logged_in" class="hidden">
-            <strong><a href="/account" class="username"></a></strong>
-        </div>
-    </div>
-
     <div id="main" class="main">
         <div class="mainLeft">
             <h2>写封信给未来的自己</h2>
@@ -26,14 +16,12 @@
                     <tr>
                         <th>邮箱：</th>
                         <td><input id="recipient" name="recipient" size="45" type="text" value="E-mail地址"></td>
-                        <td></td>
                     </tr>
                     <tr>
                         <th>主题：</th>
                         <td>
                             <input id="subject" type="text" name="subject" value="致未来的自己" size="45"/>
                         </td>
-                        <td></td>
                     </tr>
                     <tr>
                         <th style="vertical-align: top">内容：</th>
@@ -41,7 +29,6 @@
 					<textarea class="emailForm" id="body" name="body" cols="45" rows="20">Hi ,
 					</textarea>
                         </td>
-                        <td></td>
                     </tr>
                     <tr id="exact_date">
                         <th>发信日期：</th>
@@ -148,8 +135,6 @@
                             </select>
 
                         </td>
-                        <td>
-                        </td>
                     </tr>
                     <tr>
                         <th>隐私类型</th>
@@ -158,6 +143,13 @@
                                    style="border-style: none" type="radio" value="false">&nbsp;私密<br>
                             <input class="form" id="letterPublic" name="privacyType" style="border-style: none"
                                    type="radio" value="true">&nbsp;公开（匿名）
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>邮箱校验码</th>
+                        <td>
+                            <input id="verification" name="verification" size="25" type="text">
+                            <button id="send_vcode" name="send_vcode" onclick="">获取校验码</button>
                         </td>
                     </tr>
                     <tr>
