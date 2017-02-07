@@ -12,7 +12,9 @@ import xin.futureme.letter.common.LetterPrivacy;
 import xin.futureme.letter.common.LetterStatus;
 import xin.futureme.letter.entity.Letter;
 import xin.futureme.letter.service.LetterService;
+import xin.futureme.letter.utils.JedisUtils;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -34,6 +36,18 @@ public class LetterController {
     return "letter/edit";
   }
 
+  @RequestMapping(value = "/sendVcode", method = RequestMethod.POST)
+  public String sendVerificationCode(HttpServletRequest request, ModelMap modelMap) {
+    String recipient = request.getParameter("recipient");
+    try {
+      letterService.sendVerificationCode(recipient);
+    } catch (MessagingException e) {
+      e.printStackTrace();
+      return "letter/edit";
+    }
+    return "letter/edit";
+  }
+
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   public String save(HttpServletRequest request, ModelMap modelMap) {
     String recipient = request.getParameter("recipient");
@@ -43,9 +57,14 @@ public class LetterController {
     String sendMonth = request.getParameter("sendMonth");
     String sendDate = request.getParameter("sendDate");
     String privacyType = request.getParameter("privacyType");
+    String verification = request.getParameter("verification");
 
-    if (!validateParams(recipient, subject, body, sendYear, sendMonth, sendDate, privacyType)) {
+    if (!validateParams(recipient, sendYear, sendMonth, sendDate, privacyType, verification)) {
       return "letter/edit";
+    }
+
+    if (verificationCodeIsInvalid(recipient, verification)) {
+      return "";
     }
 
     Letter letter = new Letter();
@@ -78,16 +97,32 @@ public class LetterController {
   }
 
   /**
-   * 校验参数是否非空
+   * 身份认证，校验邮箱是否属于本人
+   * @param verification
+   * @return
+   */
+  private boolean verificationCodeIsInvalid(String recipient, String verification) {
+    String code = JedisUtils.get(recipient);
+    if (code == null || !(code.equals(verification))) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 校验参数是否合法
    * @param params
    * @return
    */
   private boolean validateParams(String... params) {
+    boolean flag = true;
+
     for (String p : params) {
       if (StringUtils.isEmpty(p)) {
-        return false;
+        flag = false;
+        break;
       }
     }
-    return true;
+    return flag;
   }
 }

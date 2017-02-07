@@ -12,10 +12,12 @@ import xin.futureme.letter.entity.Letter;
 import xin.futureme.letter.service.EmailService;
 import xin.futureme.letter.service.LetterService;
 import xin.futureme.letter.service.StorageService;
+import xin.futureme.letter.utils.JedisUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.mail.MessagingException;
 
 /**
@@ -118,6 +120,33 @@ public class LetterServiceImpl implements LetterService{
       letters = new ArrayList<>();
     }
     return letters;
+  }
+
+  @Override
+  public void sendVerificationCode(String recipient) throws MessagingException {
+    String code = generateVerificationCode(recipient);
+    JedisUtils.set(recipient, code, 0);
+
+    String subject = "来自futureme.xin的校验码";
+    String body = "您在futureme.xin的校验码为" + code + "，如非本人操作请忽略。";
+    emailService.send(recipient, subject, body);
+  }
+
+  /**
+   * 产生校验码，随机数字
+   * @param recipient
+   * @return
+   */
+  private String generateVerificationCode(String recipient) {
+    String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    int codeLength = 8;
+    Random random = new Random();
+    StringBuffer buf = new StringBuffer();
+    for (int i = 0; i < codeLength; i++) {
+      int num = random.nextInt(str.length());
+      buf.append(str.charAt(num));
+    }
+    return buf.toString();
   }
 
   @Override
