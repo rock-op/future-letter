@@ -65,15 +65,6 @@
                             </script>
                         </td>
                     </tr>
-                    <tr>
-                        <th>隐私类型</th>
-                        <td>
-                            <input checked="checked" class="form" id="letterPrivate" name="privacyType"
-                                   style="border-style: none" type="radio" value="false">&nbsp;私密<br>
-                            <input class="form" id="letterPublic" name="privacyType" style="border-style: none"
-                                   type="radio" value="true">&nbsp;公开（匿名）
-                        </td>
-                    </tr>
                     <%--<tr>--%>
                         <%--<th>邮箱校验码</th>--%>
                         <%--<td>--%>
