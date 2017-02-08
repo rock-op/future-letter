@@ -53,13 +53,12 @@ public class LetterController {
     String recipient = request.getParameter("recipient");
     String subject = request.getParameter("subject");
     String body = request.getParameter("body");
-    String sendYear = request.getParameter("sendYear");
-    String sendMonth = request.getParameter("sendMonth");
     String sendDate = request.getParameter("sendDate");
     String privacyType = request.getParameter("privacyType");
     String verification = request.getParameter("verification");
+    verification = "aaa";
 
-    if (!validateParams(recipient, sendYear, sendMonth, sendDate, privacyType, verification)) {
+    if (!validateParams(recipient, sendDate, privacyType, verification)) {
       return "letter/edit";
     }
 
@@ -80,7 +79,7 @@ public class LetterController {
     } else {
       letter.setPrivacyType(LetterPrivacy.PUBLIC_ANONYMOUS.getCode());
     }
-    String sendTime = sendYear + "-" + sendMonth + "-" + sendDate + " 00:00:00";
+    String sendTime = sendDate + " 00:00:00";
     letter.setSendTime(Timestamp.valueOf(sendTime).getTime());
 
     logger.info("save letter, letter:{}", letter.toString());
