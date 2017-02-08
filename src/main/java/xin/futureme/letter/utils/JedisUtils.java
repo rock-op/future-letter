@@ -936,7 +936,6 @@ public class JedisUtils {
    * Returns the jedis instance to pool.
    *
    * @param jedis
-   * @param isBroken
    */
   public static void returnBrokenResource(Jedis jedis) {
     if (jedis != null) {
@@ -948,7 +947,6 @@ public class JedisUtils {
    * Returns the jedis instance to pool.
    *
    * @param jedis
-   * @param isBroken
    */
   public static void returnResource(Jedis jedis) {
     if (jedis != null) {
@@ -958,9 +956,6 @@ public class JedisUtils {
 
   /**
    * Transform Object key to Bytes.
-   *
-   * @param key
-   * @return
    */
   public static byte[] getBytesKey(Object object) {
     if (object instanceof String) {

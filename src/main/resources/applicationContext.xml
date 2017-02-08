@@ -34,4 +34,7 @@
             </list>
         </property>
     </bean>
+
+    <!-- JedisUtils -->
+    <bean id="springContextHolder" class="xin.futureme.letter.utils.SpringContextHolder" lazy-init="false"/>
 </beans>
