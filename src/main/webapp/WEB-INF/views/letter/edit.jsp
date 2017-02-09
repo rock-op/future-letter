@@ -10,7 +10,10 @@
         window.onload = function () {
             var subjectElement = document.getElementById("subject");
             var date = new Date();
-            subjectElement.value = "一封来自" + date.getFullYear() + "年" + date.getMonth() + "月" + date.getDay() + "日的信";
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            subjectElement.value = "一封来自" + year + "年" + month + "月" + day + "日的信";
         }
 
         function clearOnClickEmailInput() {
@@ -31,7 +34,7 @@
 <div class="pageContainer">
     <div id="main" class="main">
         <div class="mainLeft">
-            <h2>写封信给未来的自己</h2>
+            <h2>致未来的自己</h2>
             <form accept-charset="utf-8" action="/letter/save" class="letterForm" id="new_letter" method="post">
                 <table>
                     <tbody>
