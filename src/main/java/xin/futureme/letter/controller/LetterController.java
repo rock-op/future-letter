@@ -1,5 +1,6 @@
 package xin.futureme.letter.controller;
 
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import xin.futureme.letter.common.LetterPrivacy;
 import xin.futureme.letter.common.LetterStatus;
 import xin.futureme.letter.entity.Letter;
@@ -18,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Random;
 
 /**
  * Created by rockops on 2017-02-04.
@@ -36,16 +39,27 @@ public class LetterController {
     return "letter/edit";
   }
 
-  @RequestMapping(value = "/sendVcode", method = RequestMethod.POST)
-  public String sendVerificationCode(HttpServletRequest request, ModelMap modelMap) {
+  @RequestMapping(value = "/sendVCode", method = RequestMethod.POST)
+  @ResponseBody
+  public String sendVerificationCode(HttpServletRequest request) {
+    JSONObject result = new JSONObject();
+    result.put("success", false);
+
     String recipient = request.getParameter("recipient");
+    String code = generateVerificationCode(recipient);
+    JedisUtils.set(recipient, code, 0);
+
     try {
-      letterService.sendVerificationCode(recipient);
+      letterService.sendVerificationCode(recipient, code);
+      result.put("success", true);
+      result.put("msg", "发送成功");
     } catch (MessagingException e) {
       e.printStackTrace();
-      return "letter/edit";
+      result.put("success", false);
+      result.put("msg", e.getCause().toString());
     }
-    return "letter/edit";
+
+    return result.toString();
   }
 
   @RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -54,14 +68,13 @@ public class LetterController {
     String subject = request.getParameter("subject");
     String body = request.getParameter("body");
     String sendDate = request.getParameter("sendDate");
-    String verification = request.getParameter("verification");
-    verification = "aaa";
+    String vCode = request.getParameter("vCode");
 
-    if (!validateParams(recipient, sendDate, verification)) {
+    if (!validateParams(recipient, sendDate, vCode)) {
       return "letter/edit";
     }
 
-    if (verificationCodeIsInvalid(recipient, verification)) {
+    if (!vCodeIsValid(recipient, vCode)) {
       return "";
     }
 
@@ -91,12 +104,11 @@ public class LetterController {
 
   /**
    * 身份认证，校验邮箱是否属于本人
-   * @param verification
    * @return
    */
-  private boolean verificationCodeIsInvalid(String recipient, String verification) {
+  private boolean vCodeIsValid(String recipient, String vCode) {
     String code = JedisUtils.get(recipient);
-    if (code == null || !(code.equals(verification))) {
+    if (code == null || !(code.equals(vCode))) {
       return false;
     }
     return true;
@@ -118,4 +130,22 @@ public class LetterController {
     }
     return flag;
   }
+
+    /**
+   * 产生校验码，随机数字
+   * @param recipient
+   * @return
+   */
+  private String generateVerificationCode(String recipient) {
+    String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    int codeLength = 8;
+    Random random = new Random();
+    StringBuffer buf = new StringBuffer();
+    for (int i = 0; i < codeLength; i++) {
+      int num = random.nextInt(str.length());
+      buf.append(str.charAt(num));
+    }
+    return buf.toString();
+  }
+
 }

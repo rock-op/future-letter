@@ -29,5 +29,5 @@ public interface LetterService {
   List<Letter> getLettersReadyToSend(long sendTime);
 
   // 发送邮箱校验码
-  void sendVerificationCode(String recipient) throws MessagingException;
+  void sendVerificationCode(String recipient, String code) throws MessagingException;
 }
