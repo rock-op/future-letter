@@ -1,12 +1,12 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
-<html>
+<html meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
 <head>
     <title>futureMe.xin</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/main.css"/>
     <script type="text/javascript" src="http://www.js-css.cn/jscode/jquery.min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/laydate/laydate.js"></script>
     <script src="${pageContext.request.contextPath}/static/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
-    <script>
+    <script charset="utf-8">
         window.onload = function () {
             var subjectElement = document.getElementById("subject");
             var date = new Date();
@@ -120,11 +120,12 @@
         //校验手机号是否合法
         function isValidMailAddress(){
             var mailAddress= $("#recipient").val();
-            var myreg = /^(.*@.*)$/;
-            if(!myreg.test(mailAddress)){
+            var atPos = mailAddress.indexOf("@");
+            var dotPos = mailAddress.indexOf(".");
+            if (atPos<1 || dotPos-atPos<2) {
                 alert('请输入有效的邮箱地址！');
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
