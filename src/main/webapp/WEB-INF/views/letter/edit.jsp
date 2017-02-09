@@ -23,7 +23,8 @@
                 recipientElement.value = "";
             }
         }
-        //发送验证码时添加cookie
+
+        //以下是发送验证码逻辑，发送时添加cookie
         function addCookie(name,value,expiresHours){
             var cookieString=name+"="+escape(value);
             //判断是否设置过期时间,0代表关闭浏览器时失效
@@ -79,7 +80,7 @@
                 settime(obj);//开始倒计时
             }
         }
-        //将手机利用ajax提交到后台的发短信接口
+        //利用ajax提交到后台的发邮件接口
         function doPostBack(url,backFunc,queryParam) {
             $.ajax({
                 async : false,
@@ -98,7 +99,6 @@
                 alert(d.msg);
             }else{//返回验证码
                 alert(d.msg);
-//                $("#code").val(d.msg);
             }
         }
         //开始倒计时
@@ -117,7 +117,7 @@
             }
             setTimeout(function() { settime(obj) },1000) //每1000毫秒执行一次
         }
-        //校验手机号是否合法
+        //校验邮箱是否合法
         function isValidMailAddress(){
             var mailAddress= $("#recipient").val();
             var atPos = mailAddress.indexOf("@");
@@ -127,6 +127,41 @@
                 return false;
             } else {
                 return true;
+            }
+        }
+
+        // 验证非空
+        function validate_required(field,alerttxt)
+        {
+            with (field)
+            {
+                if (value==null||value=="") {
+                    alert(alerttxt);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        // 对于整个表单的提交，监听结果
+        function validate_form(thisForm) {
+            with(thisForm) {
+                if (isValidMailAddress() == false) {
+                    $("recipient").focus();
+                    return false;
+                }
+                if (validate_required(vCode, "验证码不能为空") == false) {
+                    vCode.focus();
+                    return false;
+                }
+                if (validate_required(subject, "主题不能为空") == false) {
+                    subject.focus();
+                    return false;
+                }
+                if (validate_required(sendDate, "发送日期不能为空") == false) {
+                    sendDate.focus();
+                    return false;
+                }
             }
         }
     </script>
@@ -142,7 +177,7 @@
     <div id="main" class="main">
         <div class="mainLeft">
             <h2>致未来的自己</h2>
-            <form accept-charset="utf-8" action="/letter/save" class="letterForm" id="new_letter" method="post">
+            <form accept-charset="utf-8" action="/letter/save" class="letterForm" id="new_letter" method="post" onsubmit="return validate_form(this)">
                 <table>
                     <tbody>
                     <tr>
@@ -185,7 +220,7 @@
 
                     <tr>
                         <th>&nbsp;</th>
-                        <td><input type="submit" value="发送！" class="bigBlueButton"></td>
+                        <td><input type="submit" value="发送！"></td>
                     </tr>
                     </tbody>
                 </table>
