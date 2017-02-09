@@ -11,6 +11,9 @@ table,th,td
 {
     border:0px solid black;
 }
+th {
+    text-align: right;
+}
 
 #ul_navigator {
     list-style-type:none;
