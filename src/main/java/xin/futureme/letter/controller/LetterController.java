@@ -39,7 +39,7 @@ public class LetterController {
     return "letter/edit";
   }
 
-  @RequestMapping(value = "/sendVCode", method = RequestMethod.POST)
+  @RequestMapping(value = "/sendVCode", method = RequestMethod.POST, produces="application/json;charset=utf-8")
   @ResponseBody
   public String sendVerificationCode(HttpServletRequest request) {
     JSONObject result = new JSONObject();
@@ -53,10 +53,11 @@ public class LetterController {
       letterService.sendVerificationCode(recipient, code);
       result.put("success", true);
       result.put("msg", "发送成功");
-    } catch (MessagingException e) {
+    } catch (Exception e) {
+      logger.error("send vcode error, recipient:{}", recipient);
       e.printStackTrace();
       result.put("success", false);
-      result.put("msg", e.getCause().toString());
+      result.put("msg", "邮箱输入有误，请重新输入!");
     }
 
     return result.toString();
