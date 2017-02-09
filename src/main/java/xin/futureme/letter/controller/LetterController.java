@@ -63,8 +63,13 @@ public class LetterController {
     return result.toString();
   }
 
-  @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public String save(HttpServletRequest request, ModelMap modelMap) {
+  @RequestMapping(value = "/save", method = RequestMethod.POST, produces="application/json;charset=utf-8")
+  @ResponseBody
+  public String save(HttpServletRequest request) {
+    JSONObject result = new JSONObject();
+    result.put("success", false);
+    result.put("msg", "");
+
     String recipient = request.getParameter("recipient");
     String subject = request.getParameter("subject");
     String body = request.getParameter("body");
@@ -72,11 +77,15 @@ public class LetterController {
     String vCode = request.getParameter("vCode");
 
     if (!validateParams(recipient, sendDate, vCode)) {
-      return "letter/edit";
+      result.put("success", false);
+      result.put("msg", "参数为空");
+      return result.toString();
     }
 
     if (!vCodeIsValid(recipient, vCode)) {
-      return "";
+      result.put("success", false);
+      result.put("msg", "验证码校验错误");
+      return result.toString();
     }
 
     Letter letter = new Letter();
@@ -96,11 +105,14 @@ public class LetterController {
     } catch (IOException e) {
       logger.error("save letter error, letter:{}", letter.toString());
       e.printStackTrace();
-      return "letter/error";
+      result.put("success", false);
+      result.put("msg", "保存错误");
+      return result.toString();
     }
 
-    modelMap.put("sendTime", letter.getSendTime());
-    return "letter/save";
+    result.put("success", true);
+    result.put("msg", "保存成功");
+    return result.toString();
   }
 
   /**
