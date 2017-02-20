@@ -86,7 +86,6 @@
                 async : false,
                 cache : false,
                 type : 'POST',
-                contentType: "application/json;charset=utf-8",
                 url : url,// 请求的action路径
                 data:queryParam,
                 error : function() {// 请求失败处理函数
@@ -95,12 +94,10 @@
             });
         }
         function backFunc1(data){
-            alert(data);
-            var d = $.parseJSON(data);
-            if(!d.success){
-                alert(d.msg);
+            if(!data.success){
+                alert(data.msg);
             }else{//返回验证码
-                alert(d.msg);
+                alert(data.msg);
             }
         }
         //开始倒计时

@@ -41,7 +41,7 @@ public class LetterController {
 
   @RequestMapping(value = "/sendVCode", method = RequestMethod.POST)
   @ResponseBody
-  public String sendVerificationCode(HttpServletRequest request) {
+  public JSONObject sendVerificationCode(HttpServletRequest request) {
     JSONObject result = new JSONObject();
     result.put("success", false);
 
@@ -59,12 +59,12 @@ public class LetterController {
       result.put("msg", "邮箱输入有误，请重新输入!");
     }
 
-    return result.toString();
+    return result;
   }
 
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   @ResponseBody
-  public String save(HttpServletRequest request) {
+  public JSONObject save(HttpServletRequest request) {
     JSONObject result = new JSONObject();
     result.put("success", false);
     result.put("msg", "");
@@ -78,13 +78,13 @@ public class LetterController {
     if (!validateParams(recipient, sendDate, vCode)) {
       result.put("success", false);
       result.put("msg", "参数为空");
-      return result.toString();
+      return result;
     }
 
     if (!vCodeIsValid(recipient, vCode)) {
       result.put("success", false);
       result.put("msg", "验证码校验错误");
-      return result.toString();
+      return result;
     }
 
     Letter letter = new Letter();
@@ -106,12 +106,12 @@ public class LetterController {
       e.printStackTrace();
       result.put("success", false);
       result.put("msg", "保存错误");
-      return result.toString();
+      return result;
     }
 
     result.put("success", true);
     result.put("msg", "保存成功");
-    return result.toString();
+    return result;
   }
 
   /**
