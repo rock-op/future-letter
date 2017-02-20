@@ -123,31 +123,13 @@ public class LetterServiceImpl implements LetterService{
   }
 
   @Override
-  public void sendVerificationCode(String recipient) throws MessagingException {
-    String code = generateVerificationCode(recipient);
-    JedisUtils.set(recipient, code, 0);
+  public void sendVerificationCode(String recipient, String code) throws MessagingException {
 
     String subject = "来自futureme.xin的校验码";
     String body = "您在futureme.xin的校验码为" + code + "，如非本人操作请忽略。";
     emailService.send(recipient, subject, body);
   }
 
-  /**
-   * 产生校验码，随机数字
-   * @param recipient
-   * @return
-   */
-  private String generateVerificationCode(String recipient) {
-    String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    int codeLength = 8;
-    Random random = new Random();
-    StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < codeLength; i++) {
-      int num = random.nextInt(str.length());
-      buf.append(str.charAt(num));
-    }
-    return buf.toString();
-  }
 
   @Override
   public int deleteByPrimaryKey(int id) {

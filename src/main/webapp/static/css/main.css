@@ -1,7 +1,45 @@
 body {
     font-family:"Lucida Console",Monaco, monospace;
+
 }
 
 .pageContainer {
 
+}
+
+table,th,td
+{
+    border:0px solid black;
+}
+th {
+    text-align: right;
+}
+
+#ul_navigator {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+}
+
+.li_navigator {
+    display:inline;
+    float: left;
+}
+
+a:link,a:visited
+{
+    display:block;
+    width:120px;
+    font-weight:bold;
+    color:#FFFFFF;
+    background-color:#98bf21;
+    text-align:center;
+    padding:4px;
+    text-decoration:none;
+    text-transform:uppercase;
+}
+a:hover,a:active
+{
+    background-color:#7A991A;
 }
