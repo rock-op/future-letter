@@ -1,5 +1,6 @@
 package xin.futureme.letter.controller;
 
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +9,18 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import xin.futureme.letter.common.LetterPrivacy;
 import xin.futureme.letter.common.LetterStatus;
 import xin.futureme.letter.entity.Letter;
 import xin.futureme.letter.service.LetterService;
+import xin.futureme.letter.utils.JedisUtils;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Random;
 
 /**
  * Created by rockops on 2017-02-04.
@@ -34,18 +39,52 @@ public class LetterController {
     return "letter/edit";
   }
 
+  @RequestMapping(value = "/sendVCode", method = RequestMethod.POST)
+  @ResponseBody
+  public JSONObject sendVerificationCode(HttpServletRequest request) {
+    JSONObject result = new JSONObject();
+    result.put("success", false);
+
+    String recipient = request.getParameter("recipient");
+    String code = generateVerificationCode(recipient);
+    JedisUtils.set(recipient, code, 0);
+
+    try {
+      letterService.sendVerificationCode(recipient, code);
+      result.put("success", true);
+      result.put("msg", "发送成功");
+    } catch (Exception e) {
+      logger.error("send vcode error, recipient:{}", recipient);
+      result.put("success", false);
+      result.put("msg", "邮箱输入有误，请重新输入!");
+    }
+
+    return result;
+  }
+
   @RequestMapping(value = "/save", method = RequestMethod.POST)
-  public String save(HttpServletRequest request, ModelMap modelMap) {
+  @ResponseBody
+  public JSONObject save(HttpServletRequest request) {
+    JSONObject result = new JSONObject();
+    result.put("success", false);
+    result.put("msg", "");
+
     String recipient = request.getParameter("recipient");
     String subject = request.getParameter("subject");
     String body = request.getParameter("body");
-    String sendYear = request.getParameter("sendYear");
-    String sendMonth = request.getParameter("sendMonth");
     String sendDate = request.getParameter("sendDate");
-    String privacyType = request.getParameter("privacyType");
+    String vCode = request.getParameter("vCode");
 
-    if (!validateParams(recipient, subject, body, sendYear, sendMonth, sendDate, privacyType)) {
-      return "letter/edit";
+    if (!validateParams(recipient, sendDate, vCode)) {
+      result.put("success", false);
+      result.put("msg", "参数为空");
+      return result;
+    }
+
+    if (!vCodeIsValid(recipient, vCode)) {
+      result.put("success", false);
+      result.put("msg", "验证码校验错误");
+      return result;
     }
 
     Letter letter = new Letter();
@@ -55,13 +94,8 @@ public class LetterController {
     letter.setSubject(subject);
     letter.setBody(body.trim());
     letter.setStatus(LetterStatus.UNSENT.getCode());
-
-    if (privacyType.equals("false")) {
-      letter.setPrivacyType(LetterPrivacy.PRIVATE.getCode());
-    } else {
-      letter.setPrivacyType(LetterPrivacy.PUBLIC_ANONYMOUS.getCode());
-    }
-    String sendTime = sendYear + "-" + sendMonth + "-" + sendDate + " 00:00:00";
+    letter.setPrivacyType(LetterPrivacy.PRIVATE.getCode());
+    String sendTime = sendDate + " 00:00:00";
     letter.setSendTime(Timestamp.valueOf(sendTime).getTime());
 
     logger.info("save letter, letter:{}", letter.toString());
@@ -70,24 +104,60 @@ public class LetterController {
     } catch (IOException e) {
       logger.error("save letter error, letter:{}", letter.toString());
       e.printStackTrace();
-      return "letter/error";
+      result.put("success", false);
+      result.put("msg", "保存错误");
+      return result;
     }
 
-    modelMap.put("sendTime", letter.getSendTime());
-    return "letter/save";
+    result.put("success", true);
+    result.put("msg", "保存成功");
+    return result;
   }
 
   /**
-   * 校验参数是否非空
+   * 身份认证，校验邮箱是否属于本人
+   * @return
+   */
+  private boolean vCodeIsValid(String recipient, String vCode) {
+    String code = JedisUtils.get(recipient);
+    if (code == null || !(code.equals(vCode))) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 校验参数是否合法
    * @param params
    * @return
    */
   private boolean validateParams(String... params) {
+    boolean flag = true;
+
     for (String p : params) {
       if (StringUtils.isEmpty(p)) {
-        return false;
+        flag = false;
+        break;
       }
     }
-    return true;
+    return flag;
   }
+
+    /**
+   * 产生校验码，随机数字
+   * @param recipient
+   * @return
+   */
+  private String generateVerificationCode(String recipient) {
+    String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    int codeLength = 8;
+    Random random = new Random();
+    StringBuffer buf = new StringBuffer();
+    for (int i = 0; i < codeLength; i++) {
+      int num = random.nextInt(str.length());
+      buf.append(str.charAt(num));
+    }
+    return buf.toString();
+  }
+
 }

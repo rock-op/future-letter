@@ -12,10 +12,12 @@ import xin.futureme.letter.entity.Letter;
 import xin.futureme.letter.service.EmailService;
 import xin.futureme.letter.service.LetterService;
 import xin.futureme.letter.service.StorageService;
+import xin.futureme.letter.utils.JedisUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.mail.MessagingException;
 
 /**
@@ -119,6 +121,15 @@ public class LetterServiceImpl implements LetterService{
     }
     return letters;
   }
+
+  @Override
+  public void sendVerificationCode(String recipient, String code) throws MessagingException {
+
+    String subject = "来自futureme.xin的校验码";
+    String body = "您在futureme.xin的校验码为" + code + "，如非本人操作请忽略。";
+    emailService.send(recipient, subject, body);
+  }
+
 
   @Override
   public int deleteByPrimaryKey(int id) {

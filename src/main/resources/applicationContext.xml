@@ -18,6 +18,7 @@
     <import resource="classpath:spring-mybatis.xml"/>
     <import resource="classpath:email.xml"/>
     <import resource="classpath:spring-task.xml"/>
+    <import resource="classpath:spring-redis.xml"/>
 
     <bean id="configProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -28,7 +29,12 @@
                 <value>classpath*:/jdbc.properties</value>
                 <value>classpath*:/email.properties</value>
                 <value>classpath*:/oss.properties</value>
+                <value>classpath*:/redis.properties</value>
+                <value>classpath*:/web.properties</value>
             </list>
         </property>
     </bean>
+
+    <!-- JedisUtils -->
+    <bean id="springContextHolder" class="xin.futureme.letter.utils.SpringContextHolder" lazy-init="false"/>
 </beans>
