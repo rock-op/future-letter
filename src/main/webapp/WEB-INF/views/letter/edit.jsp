@@ -168,8 +168,8 @@
 </head>
 <body>
 <ul id="ul_navigator">
-    <li class="li_navigator"><a href="../index">首页</a></li>
-    <li class="li_navigator"><a href="edit">写信</a></li>
+    <li class="li_navigator"><a href="/">首页</a></li>
+    <li class="li_navigator"><a href="letter/edit">写信</a></li>
     <li class="li_navigator"><a href="#about">关于</a></li>
 </ul>
 <div class="pageContainer">
