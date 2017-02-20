@@ -39,7 +39,6 @@ public class LetterController {
     return "letter/edit";
   }
 
-  //@RequestMapping(value = "/sendVCode", method = RequestMethod.POST, produces="application/json;charset=utf-8")
   @RequestMapping(value = "/sendVCode", method = RequestMethod.POST)
   @ResponseBody
   public String sendVerificationCode(HttpServletRequest request) {
@@ -63,7 +62,6 @@ public class LetterController {
     return result.toString();
   }
 
-  //@RequestMapping(value = "/save", method = RequestMethod.POST, produces="application/json;charset=utf-8")
   @RequestMapping(value = "/save", method = RequestMethod.POST)
   @ResponseBody
   public String save(HttpServletRequest request) {
